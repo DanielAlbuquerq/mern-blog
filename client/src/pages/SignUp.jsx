@@ -32,7 +32,7 @@ export default function SignUp() {
       if (data.success === false) {
         return setErrorMessage(data.message)
       }
-
+      setLoading(false);
       if (res.ok) {
         console.log("RES.OK")
         navigate("/sign-in")

@@ -9,12 +9,15 @@ import { useDispatch, useSelector } from "react-redux"
 import { Button, Label, TextInput, Alert, Spinner } from "flowbite-react"
 import { Link, useNavigate } from "react-router-dom"
 import { useState } from "react"
+import Oauth from "../components/Oauth"
 
 export default function SignIn() {
   const [formData, setFormData] = useState({})
   const { loading, error: errorMessage } = useSelector((state) => state.user)
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  // const loading = false
+  // const errorMessage = false
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value.trim() })
@@ -92,7 +95,7 @@ export default function SignIn() {
             <Button
               gradientDuoTone="purpleToPink"
               type="submit"
-              disable={loading}
+              disable={errorMessage}
             >
               {loading ? (
                 <>
@@ -103,6 +106,7 @@ export default function SignIn() {
                 "Sign In"
               )}
             </Button>
+            <Oauth />
           </form>
           <div className="flex gap-2 text-sm mt-1">
             <span>Dont Have an account?</span>

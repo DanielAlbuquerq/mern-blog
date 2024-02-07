@@ -2,6 +2,7 @@ import User from "../models/user.model.js"
 import bcryptjs from "bcryptjs"
 import { errorHandler } from "../utils/error.js"
 
+//Data validation for signup;
 export const signup = async (req, res, next) => {
   const { username, email, password } = req.body
 
@@ -33,6 +34,7 @@ export const signup = async (req, res, next) => {
   }
 }
 
+//Data validation for Signin;
 export const signin = async (req, res, next) => {
   const { email, password } = req.body
 
@@ -59,5 +61,36 @@ export const signin = async (req, res, next) => {
   } catch (error) {
     console.log("catch Error")
     next(error)
+  }
+}
+
+//Data validation for google auth
+export const google = async (req, res, next) => {
+  const { email, name, googlePhotoUrl } = req.body
+  try {
+    const user = await User.findOne({ email })
+    if (user) {
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET)
+      const { password, ...rest } = user._doc
+      res.status(200).json(rest)
+      console.log("ok")
+    } else {
+      const generatetedPassword =
+        Math.random().toString(36).slice(-8) +
+        Math.random().toString(36).slice(-8)
+      const hashedPassword = bcryptjs.hashSync(generatetedPassword, 10)
+      const newUser = new User({
+        username:
+          name.toLowerCase().split("  ").join("") +
+          Math.random().toString(9).slice(-4),
+        email,
+        password: hashedPassword,
+        profilePicture: googlePhotoUrl,
+        //
+      })
+      await newUser.save()
+    }
+  } catch (error) {
+    console.log(error)
   }
 }

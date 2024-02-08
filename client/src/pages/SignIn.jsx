@@ -28,7 +28,7 @@ export default function SignIn() {
     e.preventDefault()
     if (!formData.email || !formData.password) {
       console.log("handleSubmmitTrigger")
-      return dispatch(signInFailure("Please fill all the fields right now"))
+      return dispatch(signInFailure("Please fill all the fields"))
     }
     try {
       dispatch(signInStart())

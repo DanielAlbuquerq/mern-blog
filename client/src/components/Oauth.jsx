@@ -38,7 +38,7 @@ export default function Oauth() {
       }
       console.log(resultsFromGoogle.user)
     } catch (error) {
-      console.log(error)
+      console.log("Got an Error: " + error)
     }
   }
 

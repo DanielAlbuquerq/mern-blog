@@ -30,7 +30,9 @@ export default function SignUp() {
 
       console.log("submitted")
       const data = await res.json()
+
       if (data.success === false) {
+        console.log("false if-No submitted")
         return setErrorMessage(data.message)
       }
       setLoading(false)

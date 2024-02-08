@@ -27,7 +27,8 @@ export default function SignIn() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!formData.email || !formData.password) {
-      return dispatch(signInFailure("Please fill all the fields"))
+      console.log("handleSubmmitTrigger")
+      return dispatch(signInFailure("Please fill all the fields right now"))
     }
     try {
       dispatch(signInStart())
@@ -37,7 +38,7 @@ export default function SignIn() {
         body: JSON.stringify(formData),
       })
 
-      const data = await res.json()
+      const data = await res.json() //response back from Fetch.
       console.log(data)
 
       if (data.success === false) {

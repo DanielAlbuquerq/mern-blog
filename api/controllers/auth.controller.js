@@ -70,15 +70,15 @@ export const google = async (req, res, next) => {
   try {
     const user = await User.findOne({ email })
     if (user) {
-      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET)
+      // const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET)
       const { password, ...rest } = user._doc
       res.status(200).json(rest)
       console.log("ok")
     } else {
-      const generatetedPassword =
+      const generatedPassword =
         Math.random().toString(36).slice(-8) +
         Math.random().toString(36).slice(-8)
-      const hashedPassword = bcryptjs.hashSync(generatetedPassword, 10)
+      const hashedPassword = bcryptjs.hashSync(generatedPassword, 10)
       const newUser = new User({
         username:
           name.toLowerCase().split("  ").join("") +
@@ -86,8 +86,8 @@ export const google = async (req, res, next) => {
         email,
         password: hashedPassword,
         profilePicture: googlePhotoUrl,
-        //
       })
+      console.log("passwordGenerated")
       await newUser.save()
     }
   } catch (error) {

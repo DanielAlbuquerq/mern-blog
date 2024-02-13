@@ -33,6 +33,7 @@ export default function DashSidebar() {
               active={tab === "profile"}
               icon={HiUser}
               label={"User"}
+              as="div"
             >
               Profile
             </Sidebar.Item>
@@ -42,6 +43,7 @@ export default function DashSidebar() {
               active={tab === "Signout"}
               icon={HiArrowSmRight}
               className="cursor-pointer"
+              as="div"
             >
               Sign Out
             </Sidebar.Item>

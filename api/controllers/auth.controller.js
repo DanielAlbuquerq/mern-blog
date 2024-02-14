@@ -1,6 +1,7 @@
 import User from "../models/user.model.js"
 import bcryptjs from "bcryptjs"
 import { errorHandler } from "../utils/error.js"
+import jwt from "jsonwebtoken"
 
 //Data validation for signup;
 export const signup = async (req, res, next) => {
@@ -57,7 +58,22 @@ export const signin = async (req, res, next) => {
       console.log(`data not success(Password)`)
       return next(errorHandler(400, "Invalid password"))
     }
-    res.json("validUser")
+
+    //Creates jsonWebToken
+    const token = jwt.sign(
+      {
+        id: validPassword._id,
+      },
+      process.env.JWT_SECRET
+    )
+    const { password: pass, ...rest } = validUser._doc
+
+    res
+      .status(200)
+      .cookie("acceess_token", token, {
+        httpOnly: true,
+      })
+      .json(rest)
   } catch (error) {
     console.log("catch Error")
     next(error)

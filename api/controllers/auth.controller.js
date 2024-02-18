@@ -95,12 +95,14 @@ export const google = async (req, res, next) => {
           httpOnly: true,
         })
         .json(rest)
-      console.log("ok")
+      console.log("Google auth ok")
+      console.log("Data from google auth" + rest)
     } else {
       const generatedPassword =
         Math.random().toString(36).slice(-8) +
         Math.random().toString(36).slice(-8)
       const hashedPassword = bcryptjs.hashSync(generatedPassword, 10)
+
       const newUser = new User({
         username:
           name.toLowerCase().split("  ").join(" ") +

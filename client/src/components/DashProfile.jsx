@@ -1,5 +1,5 @@
 import { Button, TextInput, Alert } from "flowbite-react"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { useState, useRef, useEffect } from "react"
 import {
   getDownloadURL,
@@ -10,6 +10,11 @@ import {
 import { app } from "../firebase"
 import { CircularProgressbar } from "react-circular-progressbar"
 import "react-circular-progressbar/dist/styles.css"
+import {
+  updateStart,
+  updateFailure,
+  updateSuccess,
+} from "../Redux/user/userSlice"
 
 export default function DashProfile() {
   const { currentUser } = useSelector((state) => state.user)
@@ -17,8 +22,10 @@ export default function DashProfile() {
   const [imageFileUrl, setImageFileUrl] = useState(null)
   const [imageFileUploadProgress, setImageFileUploadProgress] = useState(null)
   const [imageFileUploadError, setImageFileUploadError] = useState(null)
+  const [formData, setFormData] = useState({})
+  const [userProfileUpdate, setUserProfileUpdate] = useState(null)
   const filePickerRef = useRef()
-
+  const dispatch = useDispatch()
   const handleImageChange = (e) => {
     const file = e.target.files[0]
     if (file) {
@@ -66,6 +73,7 @@ export default function DashProfile() {
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
           setImageFileUrl(downloadURL)
+          setFormData({ ...formData, profilePicture: downloadURL })
         })
         setImageFileUploadError(null)
       }
@@ -73,10 +81,42 @@ export default function DashProfile() {
   }
 
   console.log("ImageFile => " + imageFile, "ImageFileURL => " + imageFileUrl)
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value })
+  }
+  console.log(formData)
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    if (Object.keys(formData).length === 0) {
+      return
+    }
+    try {
+      dispatch(updateStart())
+      const res = await fetch(`/api/user/update/${currentUser._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        dispatch(updateFailure(data.massage))
+      } else {
+        console.log("DataUpdated")
+        setUserProfileUpdate("User's profile updated successfully")
+        setImageFileUploadProgress(null)
+        dispatch(updateSuccess(data))
+      }
+    } catch (error) {
+      dispatch(updateFailure(error.message))
+    }
+  }
   return (
     <div className="max-w-lg mx-auto p-3 w-full">
       <h1 className="my-7 text-center font-semibold text-3xl">Profile</h1>
-      <form className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input
           type="file"
           accept="image/*"
@@ -128,14 +168,21 @@ export default function DashProfile() {
           id="username"
           placeholder="username"
           defaultValue={currentUser.username}
+          onChange={handleChange}
         />
         <TextInput
           type="email"
           id="email"
           placeholder="email"
           defaultValue={currentUser.email}
+          onChange={handleChange}
         />
-        <TextInput type="password" id="password" placeholder="********" />
+        <TextInput
+          type="password"
+          id="password"
+          placeholder="********"
+          onChange={handleChange}
+        />
         <Button type="submit" gradientDuoTone="purpleToBlue" outline>
           Update
         </Button>
@@ -144,6 +191,7 @@ export default function DashProfile() {
         <span className="cursor-pointer">Delete Account</span>
         <span className="cursor-pointer">Sign Out</span>
       </div>
+      {userProfileUpdate && <Alert color="success">{userProfileUpdate}</Alert>}
     </div>
   )
 }

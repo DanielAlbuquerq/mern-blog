@@ -18,7 +18,7 @@ export default function Oauth() {
 
     try {
       const resultsFromGoogle = await signInWithPopup(auth, provider)
-
+      //Request going with data from googleAccount
       const res = await fetch("/api/auth/google", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -30,6 +30,8 @@ export default function Oauth() {
       })
 
       console.log(resultsFromGoogle)
+
+      //Data that came from back-end after request above.
       const data = await res.json()
 
       if (res.ok) {

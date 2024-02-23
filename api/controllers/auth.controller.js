@@ -29,7 +29,7 @@ export const signup = async (req, res, next) => {
 
   try {
     await newUser.save()
-    res.json("Signup successful")
+    res.status(200).json("Signup successful")
   } catch (error) {
     next(error)
   }
@@ -63,6 +63,7 @@ export const signin = async (req, res, next) => {
     const token = jwt.sign(
       {
         id: validUser._id,
+        isAdmin: validUser.isAdmin,
       },
       process.env.JWT_SECRET
     )
@@ -86,12 +87,17 @@ export const google = async (req, res, next) => {
   try {
     const user = await User.findOne({ email })
     if (user) {
-      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET)
-      // Separete the password from the rest data'
+      const token = jwt.sign(
+        { id: user._id, isAdmin: user.isAdmin },
+        process.env.JWT_SECRET
+      )
+      console.log("token created")
+
+      // Separete the password from the rest of data'
       const { password, ...rest } = user._doc
       res
         .status(200)
-        .cookie("access_toke", token, {
+        .cookie("access_token", token, {
           httpOnly: true,
         })
         .json(rest)
@@ -111,9 +117,13 @@ export const google = async (req, res, next) => {
         password: hashedPassword,
         profilePicture: googlePhotoUrl,
       })
-      console.log("passwordGenerated")
       await newUser.save()
-      const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET)
+      console.log("User generated")
+
+      const token = jwt.sign(
+        { id: newUser._id, isAdmin: newUser.isAdmin },
+        process.env.JWT_SECRET
+      )
       const { password, ...rest } = newUser._doc
       res
         .status(200)

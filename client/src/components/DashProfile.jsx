@@ -21,11 +21,10 @@ import {
 } from "../Redux/user/userSlice"
 import { Modal } from "flowbite-react"
 import { HiOutlineExclamationCircle } from "react-icons/hi"
+import { Link } from "react-router-dom"
 
 export default function DashProfile() {
-  const { currentUser } = useSelector((state) => state.user)
-  const { error } = useSelector((state) => state.user)
-
+  const { currentUser, error, loading } = useSelector((state) => state.user)
   const [imageFile, setImageFile] = useState(null)
   const [imageFileUrl, setImageFileUrl] = useState(null)
   const [imageFileUploadProgress, setImageFileUploadProgress] = useState(null)
@@ -89,6 +88,7 @@ export default function DashProfile() {
           setFormData({ ...formData, profilePicture: downloadURL })
         })
         setImageFileUploadError(null)
+        setImageFileUploadProgress(null)
       }
     )
   }
@@ -120,7 +120,6 @@ export default function DashProfile() {
       } else {
         console.log("DataUpdated")
         setUserProfileUpdate("User's profile updated successfully")
-        setImageFileUploadProgress(null)
         dispatch(updateSuccess(data))
       }
     } catch (error) {
@@ -232,9 +231,25 @@ export default function DashProfile() {
           placeholder="********"
           onChange={handleChange}
         />
-        <Button type="submit" gradientDuoTone="purpleToBlue" outline>
-          Update
+        <Button
+          type="submit"
+          gradientDuoTone="purpleToBlue"
+          outline
+          disabled={loading || imageFileUploadProgress}
+        >
+          {loading ? "Loading..." : "Update"}
         </Button>
+        {currentUser.isAdmin && (
+          <Link to={"/create-post"}>
+            <Button
+              type="button"
+              gradientDuoTone="purpleToPink"
+              className="w-full"
+            >
+              Create a post
+            </Button>
+          </Link>
+        )}
       </form>
 
       <div className="text-red-500 flex justify-between">
@@ -246,11 +261,7 @@ export default function DashProfile() {
         </span>
       </div>
       {userProfileUpdate && <Alert color="success">{userProfileUpdate}</Alert>}
-      {error && (
-        <Alert className="mt-4" color="failure">
-          {error}
-        </Alert>
-      )}
+      {error && <Alert color="success">{error}</Alert>}
 
       <Modal
         show={showModal}

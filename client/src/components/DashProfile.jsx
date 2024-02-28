@@ -74,7 +74,7 @@ export default function DashProfile() {
         const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
         setImageFileUploadProgress(progress.toFixed(0))
       },
-      (error) => {
+      () => {
         setImageFileUploadError(
           "Could not upload image (file must be less than 2MB)"
         )
@@ -105,6 +105,7 @@ export default function DashProfile() {
     if (Object.keys(formData).length === 0) {
       return
     }
+
     try {
       dispatch(updateStart())
       const res = await fetch(`/api/user/update/${currentUser._id}`, {
@@ -114,6 +115,7 @@ export default function DashProfile() {
         },
         body: JSON.stringify(formData),
       })
+
       const data = await res.json()
       if (!res.ok) {
         dispatch(updateFailure(data.massage))

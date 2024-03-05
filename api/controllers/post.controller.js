@@ -101,7 +101,7 @@ export const updatePost = async (req, res, next) => {
       },
       { new: true }
     )
-    res.status(200).json("The post has been updated")
+    res.status(200).json(updatedPost)
   } catch (error) {
     next(error)
   }

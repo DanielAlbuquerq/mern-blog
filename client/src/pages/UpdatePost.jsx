@@ -1,5 +1,12 @@
 import { useState, useEffect } from "react"
-import { TextInput, Select, FileInput, Button, Alert } from "flowbite-react"
+import {
+  TextInput,
+  Select,
+  FileInput,
+  Button,
+  Alert,
+  FooterTitle,
+} from "flowbite-react"
 import ReactQuill from "react-quill"
 import "react-quill/dist/quill.snow.css"
 import {
@@ -12,6 +19,7 @@ import { app } from "../firebase"
 import { CircularProgressbar } from "react-circular-progressbar"
 import "react-circular-progressbar/dist/styles.css"
 import { useNavigate, useParams } from "react-router-dom"
+import { useSelector } from "react-redux"
 
 export default function UpdatePost() {
   const [file, setFile] = useState(null)
@@ -20,11 +28,13 @@ export default function UpdatePost() {
   const [formData, setFormData] = useState({})
   const [publishError, setPublishError] = useState(null)
   const { postId } = useParams()
+  const { currentUser } = useSelector((state) => state.user)
 
   const navigate = useNavigate()
   useEffect(() => {
     try {
       const fetchPost = async () => {
+        console.log("useEffect active")
         const res = await fetch(`/api/post/getposts?postId=${postId}`)
         const data = await res.json()
 
@@ -34,9 +44,8 @@ export default function UpdatePost() {
           return
         }
         if (res.ok) {
-          console.log("data success")
-          setPublishError(null)
           setFormData(data.posts[0])
+          setPublishError(null)
         }
       }
       fetchPost()
@@ -91,13 +100,16 @@ export default function UpdatePost() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      const res = await fetch("/api/post/getposts", {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      })
+      const res = await fetch(
+        `/api/post/updatepost/${formData._id}/${currentUser._id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      )
 
       const data = await res.json()
 
@@ -108,14 +120,16 @@ export default function UpdatePost() {
       }
 
       if (res.ok) {
+        console.log("data ok")
         setPublishError(null)
         navigate(`/post/${data.slug}`)
       }
     } catch (error) {
+      console.log("catch error" + error)
       setPublishError("Something went wrong")
     }
   }
-  console.log(formData.image)
+  console.log(formData)
   return (
     <div className="p-3 max-w-3xl mx-auto min-h-screen">
       <h1 className="text-center text-3xl my-7 font-semibold">Update a post</h1>
@@ -125,12 +139,12 @@ export default function UpdatePost() {
             type="text"
             placeholder="Title"
             id="title"
+            value={formData.title}
             required
             className="flex-1"
             onChange={(e) =>
               setFormData({ ...formData, title: e.target.value })
             }
-            value={formData.title}
           />
           <Select
             onChange={(e) =>
@@ -174,7 +188,7 @@ export default function UpdatePost() {
         {imageUploadError && <Alert color="failure">{imageUploadError}</Alert>}
         {formData.image && (
           <img
-            src={formData.image == "undefined" ? null : formData.image}
+            src={formData.image}
             alt="upload"
             className="w-full h-72 object-cover"
           />
@@ -184,10 +198,10 @@ export default function UpdatePost() {
           value={formData.content}
           placeholder="Write something..."
           className=" h-72 mb-12"
+          required
           onChange={(value) => {
             setFormData({ ...formData, content: value })
           }}
-          required
         />
         <Button type="submit" gradientDuoTone="purpleToPink">
           Update post

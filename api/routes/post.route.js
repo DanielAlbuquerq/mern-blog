@@ -3,13 +3,14 @@ import { verifyToken } from "../utils/verifyUser.js"
 import {
   createPost,
   deletePost,
-  getposts,
+  getPosts,
+  updatePost,
 } from "../controllers/post.controller.js"
 
 const router = express.Router()
 
 router.post("/create", verifyToken, createPost)
-router.get("/getposts", getposts)
+router.get("/getPosts", getPosts)
 router.delete("/deletepost/:postId/:userId", verifyToken, deletePost)
-
+router.put("/updatepost/:postId/:userId", verifyToken, updatePost)
 export default router

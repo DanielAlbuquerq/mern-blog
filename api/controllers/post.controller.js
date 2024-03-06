@@ -67,6 +67,7 @@ export const getPosts = async (req, res, next) => {
     console.log("oneMonthAgo: " + oneMonthAgo)
 
     res.status(200).json({ posts, totalPosts, lastMonthPost })
+    console.log("data sent")
   } catch (error) {
     next(error)
   }

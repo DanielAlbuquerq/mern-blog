@@ -63,7 +63,7 @@ export default function DashUser() {
     setShowModal(false)
 
     try {
-      const res = await fetch(`/api/user/deleteuser/${userIdToDelete}`, {
+      const res = await fetch(`/api/user/delete/${userIdToDelete}`, {
         method: "DELETE",
       })
 
@@ -74,7 +74,8 @@ export default function DashUser() {
       if (!res.ok) {
         console.log(data.message)
       } else {
-        setUsers((prev) => prev.filter((post) => post._id !== userIdToDelete))
+        console.log("userDeleted")
+        setUsers((prev) => prev.filter((user) => user._id !== userIdToDelete))
       }
     } catch (error) {
       console.log(error)
@@ -112,7 +113,7 @@ export default function DashUser() {
                   <Table.Cell>{user.email}</Table.Cell>
                   <Table.Cell>
                     {user.isAdmin ? (
-                      <FaCheck />
+                      <FaCheck className="text-green-500" />
                     ) : (
                       <FaTimes className="text-red-500" />
                     )}

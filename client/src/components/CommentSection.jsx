@@ -2,7 +2,7 @@ import { Textarea, Button, Alert } from "flowbite-react"
 import { useSelector } from "react-redux"
 import { Link } from "react-router-dom"
 import { useEffect, useState } from "react"
-
+import PostComment from "./PostComment"
 // const loremIpsum =
 //   "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries"
 
@@ -10,6 +10,26 @@ export default function CommentSection({ postId }) {
   const { currentUser } = useSelector((state) => state.user)
   const [comment, setComment] = useState("")
   const [commentError, setCommentError] = useState(null)
+  const [postComments, setPostComments] = useState([])
+  console.log(postComments)
+
+  useEffect(() => {
+    const getComments = async () => {
+      try {
+        console.log(postId)
+        const res = await fetch(`/api/comment/getPostComments/${postId}`)
+
+        if (res.ok) {
+          const data = await res.json()
+          setPostComments(data)
+          console.log(postComments)
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    getComments()
+  }, [postId])
 
   const handleSubmit = async (e) => {
     console.log(e)
@@ -42,6 +62,7 @@ export default function CommentSection({ postId }) {
         console.log(data)
         setCommentError(null)
         setComment("")
+        setPostComments([data, ...postComments])
       }
     } catch (error) {
       console.log(error)
@@ -104,6 +125,21 @@ export default function CommentSection({ postId }) {
             </Alert>
           )}
         </form>
+      )}
+      {postComments.length === 0 ? (
+        <p className='text-sm my-5'>No comments yet!</p>
+      ) : (
+        <>
+          <div className='text-sm my-5 flex items-center gap-1'>
+            <p>Comments</p>
+            <div className='border border-gray-400 py-1 px-2 rounded-sm'>
+              <p>{postComments.length}</p>
+            </div>
+          </div>
+          {postComments.map((postcomment, index) => (
+            <PostComment key={index} postcomment={postcomment} />
+      ))}
+        </>
       )}
     </div>
   )

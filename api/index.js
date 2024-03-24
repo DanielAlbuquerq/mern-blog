@@ -36,9 +36,11 @@ app.use("/api/auth", authRoutes)
 app.use("/api/post", postRoutes)
 app.use("/api/comment", commentRoutes)
 
+
 //middleware
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500
+  console.log("Middleware Status Code: " + err.statusCode)
   const message = err.message || "Internal Server Error"
   res.status(statusCode).json({
     success: false,

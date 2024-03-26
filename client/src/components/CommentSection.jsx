@@ -68,6 +68,7 @@ export default function CommentSection({ postId }) {
       setCommentError(error.message)
     }
   }
+
   const handleLike = async(commentId) => {
 
     try {
@@ -95,6 +96,21 @@ export default function CommentSection({ postId }) {
     } catch (error) {
       console.log(error.message)
     }
+  }
+
+  const handleEdit = async (comment, editedContent) => {
+
+    setPostComments(
+      postComments.map((c)=>
+        c._id === comment._id ? {...c, content: editedContent} : c
+      )
+    );
+    // setEditedContent(postcomment.content)
+    // try {
+    //     isEditing
+    // } catch (error) {
+      
+    // }
   }
 
   return (
@@ -164,7 +180,7 @@ export default function CommentSection({ postId }) {
             </div>
           </div>
           {postComments.map((postcomment, index) => (
-            <PostComment key={index} postcomment={postcomment} onLike={handleLike}/>
+            <PostComment key={index} postcomment={postcomment} onLike={handleLike} onEdit={handleEdit}/>
       ))}
         </>
       )}

@@ -21,5 +21,6 @@ export default function Comment({ comment }) {
     }
     getUser()
   }, [])
+
   return <div>Comment</div>
 }

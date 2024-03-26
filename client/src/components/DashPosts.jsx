@@ -150,6 +150,7 @@ export default function DashPosts() {
               </Table.Body>
             ))}
           </Table>
+          
           {showMore && (
             <button
               onClick={handleShowMore}

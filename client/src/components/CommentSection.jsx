@@ -3,6 +3,9 @@ import { useSelector } from "react-redux"
 import { Link, useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
 import PostComment from "./PostComment"
+import { Modal } from "flowbite-react"
+import { HiOutlineExclamationCircle } from "react-icons/hi"
+
 // const loremIpsum =
 //   "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries"
 
@@ -12,9 +15,10 @@ export default function CommentSection({ postId }) {
   const [commentError, setCommentError] = useState(null)
   const [postComments, setPostComments] = useState([])
   const navigate = useNavigate()
-
+  const [showModal, setShowModal] = useState(false)
+  const [commentToDelete, setCommentToDelete] = useState(null)
   console.log(postId)
-
+  
   useEffect(() => {
     const getComments = async () => {
       try {
@@ -113,6 +117,30 @@ export default function CommentSection({ postId }) {
     // }
   }
 
+  const handleDelete = async (commentId) => {
+    setShowModal(false)
+    try {
+
+      if(!currentUser){
+        navigate('/sign-in')
+        return;
+      }
+      const res = await fetch(`/api/comment/deleteComment/${commentId}`, {
+        method: 'DELETE',
+      });
+
+      if(res.ok){
+        const data = await res.json();
+        setPostComments(postComments.filter((comment) => comment._id !== commentId))
+      }
+
+    } catch (error) {
+      console.log(error)
+      console.log(error.message)
+    }
+
+  }
+
   return (
     <div className='max-w-2xl mx-auto w-full p-3'>
       {currentUser ? (
@@ -180,10 +208,41 @@ export default function CommentSection({ postId }) {
             </div>
           </div>
           {postComments.map((postcomment, index) => (
-            <PostComment key={index} postcomment={postcomment} onLike={handleLike} onEdit={handleEdit}/>
+            <PostComment key={index} postcomment={postcomment} onLike={handleLike} onEdit={handleEdit} onDelete={(commentId) => {
+              setShowModal(true)
+              setCommentToDelete(commentId)
+            }}/>
       ))}
         </>
       )}
+      {showModal && 
+        <Modal
+        show={showModal}
+        onClose={() => {
+          setShowModal(false)
+        }}
+        size="md"
+        popup
+      >
+        <Modal.Header />
+        <Modal.Body>
+          <div className="text-center">
+            <HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-gray-400 dark:text-gray-200" />
+            <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+              Are you sure you want to delete this comment?
+            </h3>
+            <div className="flex justify-center gap-4">
+              <Button color="failure" onClick={() => handleDelete(commentToDelete)}>
+                {"Yes I'm sure"}
+              </Button>
+              <Button color="gray" onClick={() => setShowModal(false)}>
+                No, cancel
+              </Button>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
+      }
     </div>
   )
 }

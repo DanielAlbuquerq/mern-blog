@@ -6,30 +6,29 @@ import { Modal } from "flowbite-react"
 import { HiOutlineExclamationCircle } from "react-icons/hi"
 import { FaCheck, FaTimes } from "react-icons/fa"
 
-export default function DashUser() {
+export default function DashComments() {
   //DashPosts runs and then jump to if (currentUser.isAdmin)
   //our if activate useEffect based on currentUser._id
 
   const { currentUser } = useSelector((state) => state.user)
-  const [users, setUsers] = useState([])
+  const [comments, setComments] = useState([])
   const [showMore, setShowMore] = useState(true)
   const [showModal, setShowModal] = useState(false)
-  const [userIdToDelete, setUserIdToDelete] = useState("")
-
+  const [commentIdToDelete, setCommentIdToDelete] = useState("")
   console.log("DashPost Activate")
 
   useEffect(() => {
     console.log("useEffect triggered")
-    const fetchUsers = async () => {
+    const fetchComments = async () => {
       try {
-        const res = await fetch(`/api/user/getusers`)
+        const res = await fetch(`/api/comment/getcomments`)
         const data = await res.json()
-
+        console.log("adminComments")
         console.log(data)
-
         if (res.ok) {
-          setUsers(data.users)
-          if (data.users.length < 9) {
+          setComments(data.comments)
+          if (data.comments.length < 9) {
+            console.log("comments less than 9")
             setShowMore(false)
           }
         }
@@ -39,18 +38,18 @@ export default function DashUser() {
     }
 
     if (currentUser.isAdmin) {
-      fetchUsers()
+      fetchComments()
     }
   }, [currentUser._id])
 
   const handleShowMore = async () => {
-    const startIndex = users.length
+    const startIndex = comments.length
     try {
-      const res = await fetch(`/api/user/getusers?startIndex=${startIndex}`)
+      const res = await fetch(`/api/user/getComments?startIndex=${startIndex}`)
       const data = await res.json()
       if (res.ok) {
-        setUsers((prev) => [...prev, ...data.users])
-        if (data.users.length < 9) {
+        setComments((prev) => [...prev, ...data.comments])
+        if (data.comments.length < 9) {
           setShowMore(false)
         }
       }
@@ -59,15 +58,14 @@ export default function DashUser() {
     }
   }
 
-  const handleDeleteUser = async () => {
+  const handleDeleteComment = async () => {
     setShowModal(false)
-
     try {
-      const res = await fetch(`/api/user/delete/${userIdToDelete}`, {
+      const res = await fetch(`/api/user/delete/${commentIdToDelete}`, {
         method: "DELETE",
       })
 
-      console.log("PostIdDelete: " + userIdToDelete)
+      console.log("PostIdDelete: " + commentIdToDelete)
       const data = await res.json()
       console.log(data)
 
@@ -75,7 +73,7 @@ export default function DashUser() {
         console.log(data.message)
       } else {
         console.log("userDeleted")
-        setUsers((prev) => prev.filter((user) => user._id !== userIdToDelete))
+        setComments((prev) => prev.filter((comment) => comment._id !== commentIdToDelete))
       }
     } catch (error) {
       console.log(error)
@@ -84,45 +82,37 @@ export default function DashUser() {
 
   return (
     <div className="table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">
-      {currentUser.isAdmin && users.length > 0 ? (
+      {currentUser.isAdmin && comments.length > 0 ? (
         <>
           <Table hoverable className="shadow-md">
             <Table.Head>
               <Table.HeadCell>Date created</Table.HeadCell>
-              <Table.HeadCell>User image</Table.HeadCell>
-              <Table.HeadCell>Username</Table.HeadCell>
-              <Table.HeadCell>Email</Table.HeadCell>
-              <Table.HeadCell>Admin</Table.HeadCell>
+              <Table.HeadCell>Comment content</Table.HeadCell>
+              <Table.HeadCell>Number of likes</Table.HeadCell>
+              <Table.HeadCell>Post Id</Table.HeadCell>
+              <Table.HeadCell>User Id</Table.HeadCell>
               <Table.HeadCell>Delete</Table.HeadCell>
             </Table.Head>
 
-            {users.map((user, index) => (
+            {comments.map((comment, index) => (
               <Table.Body className="divide-y" key={index}>
                 <Table.Row className="hover:bg-gray-200 dark:border-gray-700 dark:bg-gray-800">
                   <Table.Cell>
-                    {new Date(user.createdAt).toLocaleDateString()}
+                    {new Date(comment.createdAt).toLocaleDateString()}
                   </Table.Cell>
-                  <Table.Cell>
-                    <img
-                      src={user.profilePicture}
-                      alt={user.userName}
-                      className="w-10 h-10 rounded-full object-cover bg-gray-500"
-                    />
+                  <Table.Cell className="truncate">
+                    {comment.content}
                   </Table.Cell>
-                  <Table.Cell>{user.username}</Table.Cell>
-                  <Table.Cell>{user.email}</Table.Cell>
+                  <Table.Cell className="w-[10px] truncate">{comment.likes.length}</Table.Cell>
+                  <Table.Cell>{comment.postId}</Table.Cell>
                   <Table.Cell className="flex justify-center" >
-                    {user.isAdmin ? (
-                      <FaCheck className="text-green-500" />
-                    ) : (
-                      <FaTimes className=" text-red-500" />
-                    )}
+                      {currentUser._id}
                   </Table.Cell>
                   <Table.Cell>
                     <span
                       onClick={() => {
                         setShowModal(true)
-                        setUserIdToDelete(user._id)
+                        setCommentIdToDelete(comment._id)
                       }}
                       className="text-red-400 hover:underline cursor-pointer"
                     >
@@ -143,7 +133,7 @@ export default function DashUser() {
           )}
         </>
       ) : (
-        <p> You have no user yet </p>
+        <p> You have no comments yet </p>
       )}
 
       <Modal
@@ -159,10 +149,10 @@ export default function DashUser() {
           <div className="text-center">
             <HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-gray-400 dark:text-gray-200" />
             <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
-              Are you sure you want to delete this user?
+              Are you sure you want to delete this comment?
             </h3>
             <div className="flex justify-center gap-4">
-              <Button color="failure" onClick={handleDeleteUser}>
+              <Button color="failure" onClick={handleDeleteComment}>
                 {"Yes I'm sure"}
               </Button>
               <Button color="gray" onClick={() => setShowModal(false)}>

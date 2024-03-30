@@ -4,6 +4,7 @@ import {
   HiUser,
   HiDocumentText,
   HiOutlineUserGroup,
+  HiAnnotation,
 } from "react-icons/hi"
 import { useEffect, useState } from "react"
 import { Link, useLocation } from "react-router-dom"
@@ -58,6 +59,7 @@ export default function DashSidebar() {
             </Sidebar.Item>
           </Link>
           {currentUser.isAdmin && (
+            <>
             <Link to="/dashboard?tab=posts">
               <Sidebar.Item
                 active={tab === "posts"}
@@ -69,6 +71,17 @@ export default function DashSidebar() {
                 Posts
               </Sidebar.Item>
             </Link>
+            <Link to="/dashboard?tab=comment">
+              <Sidebar.Item
+                active={tab === "Signout"}
+                icon={HiAnnotation}
+                className="cursor-pointer"
+                as="div"
+              >
+                Comments
+              </Sidebar.Item>
+          </Link>
+            </>
           )}
           {currentUser.isAdmin && (
             <Link to="/dashboard?tab=users">

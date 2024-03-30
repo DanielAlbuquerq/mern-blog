@@ -5,7 +5,9 @@ export default function RecentArticle({post}) {
     const [articles, setArticles] = useState([])
 
   return (
-    <div className="w-full overflow-hidden group relative border border-teal-500 h-[350px] hover:shadow-xl hover:shadow-gray-500 dark:hover:shadow-xl dark:hover:shadow-white rounded-lg sm:w-[430px]">
+    <div className="w-full md:flex-1 sm:flex-1 overflow-hidden group relative border border-teal-500 h-[350px]
+         hover:shadow-md hover:shadow-gray-500 dark:hover:shadow-md dark:hover:shadow-white 
+         rounded-lg sm:w-[430px]">
         <Link to={`/postq/${post.slug}`}>
             <img  src={post.image} className="w-full h-[260px] object-cover group-hover:h-[200px] 
             transition-all duration-300 z-20" alt="post image" />

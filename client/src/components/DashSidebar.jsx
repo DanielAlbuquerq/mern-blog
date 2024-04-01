@@ -57,7 +57,7 @@ export default function DashSidebar() {
               icon={HiChartPie}
               as="div"
             >
-              Profile
+              Dashboard
             </Sidebar.Item> 
           </Link>
             )
@@ -87,17 +87,7 @@ export default function DashSidebar() {
             </Link>
             <Link to="/dashboard?tab=comments">
               <Sidebar.Item
-                active={tab === "Signout"}
-                icon={HiAnnotation}
-                className="cursor-pointer"
-                as="div"
-              >
-                Comments
-              </Sidebar.Item>
-          </Link>
-          <Link to="/dashboard?tab=">
-              <Sidebar.Item
-                active={tab === "Signout"}
+                active={tab === "comments"}
                 icon={HiAnnotation}
                 className="cursor-pointer"
                 as="div"

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { HiAnnotation, HiArrowNarrowUp, HiDocument, HiDocumentText, HiOutlineUserGroup } from "react-icons/hi"
+import { HiAnnotation, HiArrowNarrowDown, HiArrowNarrowUp, HiDocument, HiDocumentText, HiOutlineUserGroup } from "react-icons/hi"
 import { useSelector } from "react-redux"
 import { Button, Table } from "flowbite-react"
 import { Link } from "react-router-dom"
@@ -82,7 +82,7 @@ export default function DashboardComp() {
                 </div>
                 <div className="flex gap-2 text-sm">
                         <span className="text-green-500 flex items-center">
-                            <HiArrowNarrowUp />
+                            {lastMonthUsers == 0 ? <HiArrowNarrowDown className="text-red-400"/> : <HiArrowNarrowUp />}
                             {lastMonthUsers}
                         </span>
                         <div className="text-gray-500 uppercase">Last Month</div>
@@ -98,7 +98,7 @@ export default function DashboardComp() {
                 </div>
                 <div className="flex gap-2 text-sm">
                         <span className="text-green-500 flex items-center">
-                            <HiArrowNarrowUp />
+                        {lastMonthComments == 0 ? <HiArrowNarrowDown className="text-red-400"/> : <HiArrowNarrowUp />}
                             {lastMonthComments}
                         </span>
                         <div className="text-gray-500 uppercase">Last Month</div>
@@ -114,7 +114,7 @@ export default function DashboardComp() {
                 </div>
                 <div className="flex gap-2 text-sm">
                         <span className="text-green-500 flex items-center">
-                            <HiArrowNarrowUp />
+                        {lastMonthPosts == 0 ? <HiArrowNarrowDown className="text-red-400"/> : <HiArrowNarrowUp />}
                             {lastMonthPosts}
                         </span>
                         <div className="text-gray-500 uppercase">Last Month</div>

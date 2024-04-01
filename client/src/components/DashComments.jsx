@@ -106,7 +106,7 @@ export default function DashComments() {
                   <Table.Cell className="w-[10px] truncate">{comment.likes.length}</Table.Cell>
                   <Table.Cell>{comment.postId}</Table.Cell>
                   <Table.Cell className="flex justify-center" >
-                      {currentUser._id}
+                    {currentUser._id}
                   </Table.Cell>
                   <Table.Cell>
                     <span

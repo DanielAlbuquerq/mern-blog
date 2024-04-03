@@ -6,7 +6,7 @@ import { useEffect, useState } from "react"
 import RecentArticle from "../components/RecentArticle"
 
 export default function Home() {
-  
+
   const [posts, setPosts] = useState([])
   useEffect(() => {
     const fetchPost = async () => {
@@ -20,7 +20,7 @@ export default function Home() {
   return (
     <div>
       <div className={homeStyles.fDiv}>
-        <h3 className={homeStyles.h3Tag}>Welcome to my blog</h3>
+        <h3 className={homeStyles.h3Tag}>Welcome to Stacks Blog</h3>
         <p className={homeStyles.pTag}>Here you'll find a variety of articles and tutorials on topics such as
            web development, software engineering,
             and programming languages. </p>

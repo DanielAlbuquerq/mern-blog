@@ -6,8 +6,8 @@ import { useEffect, useState } from "react"
 import RecentArticle from "../components/RecentArticle"
 
 export default function Home() {
+  
   const [posts, setPosts] = useState([])
-
   useEffect(() => {
     const fetchPost = async () => {
       const res = await fetch('/api/post/getPosts');

@@ -39,7 +39,6 @@ export default function UpdatePost() {
         const data = await res.json()
 
         if (!res.ok) {
-          console.log(data.message)
           setPublishError(data.message)
           return
         }
@@ -130,6 +129,7 @@ export default function UpdatePost() {
     }
   }
   console.log(formData)
+  console.log(formData._id)
   return (
     <div className="p-3 max-w-3xl mx-auto min-h-screen">
       <h1 className="text-center text-3xl my-7 font-semibold">Update a post</h1>

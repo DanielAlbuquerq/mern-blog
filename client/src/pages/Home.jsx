@@ -19,16 +19,12 @@ export default function Home() {
 
   return (
     <div>
-      <div className={homeStyles.fDiv}>
+      <div className="flex flex-col gap-6 lg:p-28 max-w-6xl mx-auto">
         <h3 className={homeStyles.h3Tag}>Welcome to Stacks Blog</h3>
         <p className={homeStyles.pTag}>Here you'll find a variety of articles and tutorials on topics such as
            web development, software engineering,
             and programming languages. </p>
         <Link to="/search" className={homeStyles.linkTag}>View all posts</Link>
-      </div>
-
-      <div className="p-3 bg-amber-100 dark:bg-slate-700">
-        <CallToAction />
       </div>
 
       <div className="max-w-6xl mx-auto p-3 flex flex-col gap-8 py-7">
@@ -46,6 +42,12 @@ export default function Home() {
           </div>
           )}
       </div>
+
+      <div className="p-3 bg-amber-100 dark:bg-slate-700">
+        <CallToAction />
+      </div>
+
+
     </div>
   )
 }
